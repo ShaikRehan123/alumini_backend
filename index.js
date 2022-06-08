@@ -58,5 +58,5 @@ app.listen(PORT, function (err) {
     console.error("error connecting: " + err);
     return;
   }
-  console.log(`Listening on http://localhost:${PORT} `);
+  console.log(`Listening on PORT ${PORT} `);
 });
