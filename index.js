@@ -704,6 +704,179 @@ app.get("/checkout_reservation", (req, res) => {
   );
 });
 
+app.get("/get_all_rooms", (req, res) => {
+  connection.query("SELECT * FROM `room`", function (err, result) {
+    if (err) {
+      res.send({
+        status: 500,
+        message: "Something is wrong on our side",
+        error: err,
+      });
+    } else {
+      res.send({
+        status: 200,
+        message: "Successfully Fetched",
+        data: result,
+      });
+    }
+  });
+});
+
+app.get("/get_room_by_id", (req, res) => {
+  const { room_id } = req.query;
+  connection.query(
+    "SELECT * FROM `room` WHERE `room_id` = ?",
+    [room_id],
+    function (err, result) {
+      if (err) {
+        res.send({
+          status: 500,
+          message: "Something is wrong on our side",
+          error: err,
+        });
+      } else {
+        res.send({
+          status: 200,
+          message: "Successfully Fetched",
+          data: result,
+        });
+      }
+    }
+  );
+});
+
+app.put("/update_room", (req, res) => {
+  // const { room_id } = req.query;
+  console.log(req.query);
+  console.log(req.body);
+  // access form data
+  // console.log(req.body, room_id);
+  // Update room_type and room_price only
+  let { room_type, price } = req.body;
+  let { room_id } = req.query;
+  // convert room_type snake case to title case
+  room_type = room_type.charAt(0).toUpperCase() + room_type.slice(1);
+  room_type = room_type.replace(/_/g, " ");
+  console.log(room_type);
+  connection.query(
+    "UPDATE `room` SET `room_type` = ?, `price` = ? WHERE `room_id` = ?",
+    [room_type, req.body.price, req.query.room_id],
+    function (err, result) {
+      if (err) {
+        res.send({
+          status: 500,
+          message: "Something is wrong on our side",
+          error: err,
+        });
+      } else {
+        res.send({
+          status: 200,
+          message: "Successfully Updated",
+          data: result,
+        });
+      }
+    }
+  );
+  // res.send({
+  //   status: 200,
+  //   message: "Test",
+  //   data: req.body,
+  // });
+});
+
+app.delete("/delete_room", (req, res) => {
+  const { room_id } = req.query;
+  connection.query(
+    "DELETE FROM `room` WHERE `room_id` = ?",
+    [room_id],
+    function (err, result) {
+      if (err) {
+        res.send({
+          status: 500,
+          message: "Something is wrong on our side",
+          error: err,
+        });
+      } else {
+        res.send({
+          status: 200,
+          message: "Successfully Deleted",
+          data: result,
+        });
+      }
+    }
+  );
+});
+
+app.post("/add_room", (req, res) => {
+  let { room_type, price } = req.body;
+  // convert room_type snake case to title case
+  room_type = room_type.charAt(0).toUpperCase() + room_type.slice(1);
+  room_type = room_type.replace(/_/g, " ");
+  console.log(room_type);
+  // random number between 1 and 6
+  let image_number = Math.floor(Math.random() * 6) + 1;
+  connection.query(
+    "INSERT INTO `room` (`room_type`, `price` , `photo`) VALUES (?, ?, ?)",
+    [room_type, req.body.price, `${image_number}.jpg`],
+    function (err, result) {
+      if (err) {
+        res.send({
+          status: 500,
+          message: "Something is wrong on our side",
+          error: err,
+        });
+      } else {
+        res.send({
+          status: 200,
+          message: "Successfully Added",
+          data: result,
+        });
+      }
+    }
+  );
+});
+
+app.get("/get_all_users", (req, res) => {
+  connection.query("SELECT * FROM `users`", function (err, result) {
+    if (err) {
+      res.send({
+        status: 500,
+        message: "Something is wrong on our side",
+        error: err,
+      });
+    } else {
+      res.send({
+        status: 200,
+        message: "Successfully Fetched",
+        data: result,
+      });
+    }
+  });
+});
+
+app.delete("/delete_user", (req, res) => {
+  const { user_id } = req.query;
+  connection.query(
+    "DELETE FROM `users` WHERE `u_id` = ?",
+    [user_id],
+    function (err, result) {
+      if (err) {
+        res.send({
+          status: 500,
+          message: "Something is wrong on our side",
+          error: err,
+        });
+      } else {
+        res.send({
+          status: 200,
+          message: "Successfully Deleted",
+          data: result,
+        });
+      }
+    }
+  );
+});
+
 app.listen(PORT, function (err) {
   if (err) {
     console.error("error connecting: " + err);
